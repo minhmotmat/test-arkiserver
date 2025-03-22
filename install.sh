@@ -61,17 +61,17 @@ TEMP_MODEL_DIR="/tmp/sd-models"
 
 mkdir -p "$MODEL_DIR" "$CONTROLNET_DIR" "$LORA_DIR" "$TEMP_MODEL_DIR"
 
-# 🟢 Tải mô hình Realistic Vision V2.0
-REALISTIC_MODEL="$TEMP_MODEL_DIR/Realistic_Vision_V2.0.safetensors"
-FINAL_MODEL="$MODEL_DIR/Realistic_Vision_V2.0.safetensors"
+# # 🟢 Tải mô hình Realistic Vision V2.0
+# REALISTIC_MODEL="$TEMP_MODEL_DIR/Realistic_Vision_V2.0.safetensors"
+# FINAL_MODEL="$MODEL_DIR/Realistic_Vision_V2.0.safetensors"
 
-if [ -f "$REALISTIC_MODEL" ]; then
-    echo "✅ Mô hình Realistic Vision đã có, chỉ copy sang..."
-else
-    echo "🟢 Tải mô hình Realistic Vision V2.0..."
-    wget -O "$REALISTIC_MODEL" "https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors"
-fi
-cp "$REALISTIC_MODEL" "$FINAL_MODEL"
+# if [ -f "$REALISTIC_MODEL" ]; then
+#     echo "✅ Mô hình Realistic Vision đã có, chỉ copy sang..."
+# else
+#     echo "🟢 Tải mô hình Realistic Vision V2.0..."
+#     wget -O "$REALISTIC_MODEL" "https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors"
+# fi
+# cp "$REALISTIC_MODEL" "$FINAL_MODEL"
 
 # 🟢 Tải mô hình Stable Diffusion v1.5
 SD_MODEL="$TEMP_MODEL_DIR/v1-5-pruned-emaonly.safetensors"
@@ -94,14 +94,14 @@ else
     echo "✅ ControlNet Model đã có."
 fi
 
-# 🟢 Tải LoRA Model (nếu chưa có)
-LORA_MODEL="$LORA_DIR/AnythingV3.safetensors"
-if [ ! -f "$LORA_MODEL" ]; then
-    echo "🟢 Tải LoRA Model..."
-    wget -O "$LORA_MODEL" "https://huggingface.co/Lykon/LykonLoRA/resolve/main/AnythingV3.safetensors"
-else
-    echo "✅ LoRA Model đã có."
-fi
+# # 🟢 Tải LoRA Model (nếu chưa có)
+# LORA_MODEL="$LORA_DIR/AnythingV3.safetensors"
+# if [ ! -f "$LORA_MODEL" ]; then
+#     echo "🟢 Tải LoRA Model..."
+#     wget -O "$LORA_MODEL" "https://huggingface.co/Lykon/LykonLoRA/resolve/main/AnythingV3.safetensors"
+# else
+#     echo "✅ LoRA Model đã có."
+# fi
 
 # 🟢 Chạy WebUI với GPU
 echo "🟢 Chạy Stable Diffusion WebUI..."
