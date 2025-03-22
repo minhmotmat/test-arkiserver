@@ -53,56 +53,36 @@ if [ ! -d "stable-diffusion-webui" ]; then
 fi
 cd stable-diffusion-webui
 
-# 🟢 Định nghĩa thư mục mô hình
-MODEL_DIR="models/Stable-diffusion"
-CONTROLNET_DIR="extensions/sd-webui-controlnet/models"
-LORA_DIR="models/Lora"
-TEMP_MODEL_DIR="/tmp/sd-models"
+# 🟢 Cài đặt ControlNet
+echo "🟢 Cài đặt ControlNet..."
+mkdir -p extensions
+if [ ! -d "extensions/sd-webui-controlnet" ]; then
+    git clone https://github.com/Mikubill/sd-webui-controlnet.git extensions/sd-webui-controlnet
+fi
 
-mkdir -p "$MODEL_DIR" "$CONTROLNET_DIR" "$LORA_DIR" "$TEMP_MODEL_DIR"
+# 🟢 Tải mô hình ControlNet
+echo "🟢 Tải mô hình ControlNet..."
+mkdir -p models/ControlNet
+cd models/ControlNet
+wget -O control_sd15_canny.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth
+wget -O control_sd15_depth.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1p_sd15_depth.pth
+wget -O control_sd15_linear.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart.pth
+cd ../../
 
-# # 🟢 Tải mô hình Realistic Vision V2.0
-# REALISTIC_MODEL="$TEMP_MODEL_DIR/Realistic_Vision_V2.0.safetensors"
-# FINAL_MODEL="$MODEL_DIR/Realistic_Vision_V2.0.safetensors"
-
-# if [ -f "$REALISTIC_MODEL" ]; then
-#     echo "✅ Mô hình Realistic Vision đã có, chỉ copy sang..."
-# else
-#     echo "🟢 Tải mô hình Realistic Vision V2.0..."
-#     wget -O "$REALISTIC_MODEL" "https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors"
-# fi
-# cp "$REALISTIC_MODEL" "$FINAL_MODEL"
+# # 🟢 Cài đặt LoRA
+# echo "🟢 Cài đặt LoRA..."
+# mkdir -p models/Lora
+# cd models/Lora
+# wget -O AnythingV3.safetensors https://huggingface.co/Lykon/LykonLoRA/resolve/main/AnythingV3.safetensors
+# cd ../../
 
 # 🟢 Tải mô hình Stable Diffusion v1.5
-SD_MODEL="$TEMP_MODEL_DIR/v1-5-pruned-emaonly.safetensors"
-FINAL_SD_MODEL="$MODEL_DIR/v1-5-pruned-emaonly.safetensors"
-
-if [ -f "$SD_MODEL" ]; then
-    echo "✅ Mô hình SD 1.5 đã có, chỉ copy sang..."
-else
-    echo "🟢 Tải mô hình SD 1.5..."
-    wget -O "$SD_MODEL" "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors"
-fi
-cp "$SD_MODEL" "$FINAL_SD_MODEL"
-
-# 🟢 Tải ControlNet Models (nếu chưa có)
-CONTROLNET_MODEL="$CONTROLNET_DIR/control_v11p_sd15_canny.pth"
-if [ ! -f "$CONTROLNET_MODEL" ]; then
-    echo "🟢 Tải ControlNet Model..."
-    wget -O "$CONTROLNET_MODEL" "https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth"
-else
-    echo "✅ ControlNet Model đã có."
-fi
-
-# # 🟢 Tải LoRA Model (nếu chưa có)
-# LORA_MODEL="$LORA_DIR/AnythingV3.safetensors"
-# if [ ! -f "$LORA_MODEL" ]; then
-#     echo "🟢 Tải LoRA Model..."
-#     wget -O "$LORA_MODEL" "https://huggingface.co/Lykon/LykonLoRA/resolve/main/AnythingV3.safetensors"
-# else
-#     echo "✅ LoRA Model đã có."
-# fi
+echo "🟢 Tải mô hình SD 1.5..."
+mkdir -p models/Stable-diffusion
+cd models/Stable-diffusion
+wget -O v1-5-pruned-emaonly.safetensors https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
+cd ../../
 
 # 🟢 Chạy WebUI với GPU
 echo "🟢 Chạy Stable Diffusion WebUI..."
-python launch.py --xformers --listen --port 7860 --enable-insecure-extension-access
+python launch.py --listen --port 7860 --api --disable-safe-unpickle --enable-insecure-extension-access --no-download-sd-model --no-half-vae --xformers --disable-console-progressbars
