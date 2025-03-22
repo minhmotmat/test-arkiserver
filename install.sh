@@ -81,6 +81,7 @@ echo "🟢 Tải mô hình SD 1.5..."
 mkdir -p models/Stable-diffusion
 cd models/Stable-diffusion
 wget -O v1-5-pruned-emaonly.safetensors https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
+wget -O realistic-vision-v6.safetensors https://civitai.com/api/download/models/501240
 cd ../../
 
 # 🟢 Chạy WebUI với GPU
