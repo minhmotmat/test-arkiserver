@@ -105,4 +105,4 @@ fi
 
 # 🟢 Chạy WebUI với GPU
 echo "🟢 Chạy Stable Diffusion WebUI..."
-python launch.py --xformers --listen --port 7860
+python launch.py --xformers --listen --port 7860 --enable-insecure-extension-access
