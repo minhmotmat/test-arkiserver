@@ -11,12 +11,26 @@ def run_cmd(cmd):
         print("Error:", stderr.decode('utf-8'))
     return process.returncode
 
+def check_cuda():
+    try:
+        import torch
+        if torch.cuda.is_available():
+            print(f"CUDA is available. PyTorch version: {torch.__version__}")
+            print(f"CUDA version: {torch.version.cuda}")
+            return True
+    except ImportError:
+        pass
+    return False
+
 def setup_environment():
     print("Setting up environment...")
     
-    # Install PyTorch with CUDA support
-    print("Installing PyTorch with CUDA support...")
-    run_cmd("pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118")
+    # Check if CUDA and PyTorch are already installed
+    if not check_cuda():
+        print("Installing PyTorch with CUDA support...")
+        run_cmd("pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118")
+    else:
+        print("PyTorch with CUDA support is already installed, skipping...")
     
     # Install other Python dependencies from requirements.txt
     print("Installing other Python dependencies...")
