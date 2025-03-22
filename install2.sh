@@ -51,7 +51,7 @@ cd stable-diffusion-webui
 # 🟢 Tải mô hình Stable Diffusion v1.5 (Realistic Vision V2.0)
 echo "🟢 Tải mô hình Stable Diffusion Realistic Vision V2.0..."
 mkdir -p models/Stable-diffusion
-wget -O models/Stable-diffusion/model.safetensors https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors
+wget -O models/Stable-diffusion/model.safetensors https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
 
 # 🟢 Cài đặt ControlNet
 echo "🟢 Cài đặt ControlNet..."
