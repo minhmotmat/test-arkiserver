@@ -95,14 +95,14 @@ def setup_environment():
         os.chdir(current_dir)
     
     # Create models directory
-    models_dir = os.path.join(webui_dir, "models")
+    models_dir = os.path.join(webui_dir, "models", "Stable_diffusion")
     os.makedirs(models_dir, exist_ok=True)
     return webui_dir
 
 def download_model(webui_dir):
     print("Downloading Realistic Vision 2.0 model...")
     model_url = "https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors"
-    model_path = os.path.join(webui_dir, "models", "Realistic_Vision_V2.0.safetensors")
+    model_path = os.path.join(webui_dir, "models", "Stable_diffusion","Realistic_Vision_V2.0.safetensors")
     
     if not os.path.exists(model_path):
         result = run_cmd(f"wget -O {model_path} {model_url}")
@@ -112,7 +112,7 @@ def download_model(webui_dir):
     else:
         print("Model already exists, skipping download.")
 
-def setup_webui(webui_dir):
+def setup_webui(webui_dir, model_path=None):
     print("Setting up WebUI...")
     if not os.path.exists(webui_dir):
         raise Exception(f"WebUI directory not found: {webui_dir}")
@@ -120,10 +120,31 @@ def setup_webui(webui_dir):
     os.chdir(webui_dir)
     print(f"Changed directory to: {os.getcwd()}")
     
+    # Build command line arguments
+    cmd_args = [
+        "--listen",
+        "--port 7860",
+        "--api",
+        "--xformers",
+        "--enable-insecure-extension-access",
+        "--no-half-vae",
+        "--disable-safe-unpickle",
+        "--no-download-sd-model",
+        "--disable-console-progressbars",
+        "--skip-version-check"
+    ]
+    
+    # Add model arguments
+    if model_path:
+        if os.path.isfile(model_path):
+            cmd_args.append(f'--ckpt "{model_path}"')
+        else:
+            cmd_args.append(f'--ckpt-dir "{model_path}"')
+    
     # Create webui-user.sh with custom settings
     with open("webui-user.sh", "w") as f:
-        f.write("""#!/bin/bash
-export COMMANDLINE_ARGS="--listen --port 7860 --api --xformers --enable-insecure-extension-access --no-half-vae"
+        f.write(f"""#!/bin/bash
+export COMMANDLINE_ARGS="{' '.join(cmd_args)}"
 """)
     
     # Make it executable
@@ -140,12 +161,16 @@ def main():
         # Download model
         download_model(webui_dir)
         
+        # Get model path
+        model_path = os.path.join(webui_dir, "models", "Stable_diffusion", "Realistic_Vision_V2.0.safetensors")
+        
         # Setup and start WebUI
-        setup_webui(webui_dir)
+        setup_webui(webui_dir, model_path)
         
         print("\nStarting WebUI...")
         print(f"Current directory: {os.getcwd()}")
         print(f"WebUI directory: {webui_dir}")
+        print(f"Model path: {model_path}")
         print("The WebUI will be available at http://localhost:7860")
         
         if not os.path.exists("webui.sh"):
