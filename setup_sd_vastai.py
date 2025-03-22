@@ -3,6 +3,20 @@ import subprocess
 import sys
 from pathlib import Path
 
+def check_user():
+    if os.geteuid() == 0:  # Check if running as root
+        print("################################################################")
+        print("ERROR: This script must not be launched as root, aborting...")
+        print("################################################################")
+        print("\nPlease run this script as a normal user. If you're on vast.ai:")
+        print("1. Create a new user:")
+        print("   adduser sduser")
+        print("   usermod -aG sudo sduser")
+        print("\n2. Switch to the new user:")
+        print("   su - sduser")
+        print("\n3. Run the script again as the new user")
+        sys.exit(1)
+
 def run_cmd(cmd):
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
@@ -81,14 +95,14 @@ def setup_environment():
         os.chdir(current_dir)
     
     # Create models directory
-    models_dir = os.path.join(webui_dir, "models", "Stable-diffusion")
+    models_dir = os.path.join(webui_dir, "models")
     os.makedirs(models_dir, exist_ok=True)
     return webui_dir
 
 def download_model(webui_dir):
     print("Downloading Realistic Vision 2.0 model...")
     model_url = "https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors"
-    model_path = os.path.join(webui_dir, "models", "Stable-diffusion", "Realistic_Vision_V2.0.safetensors")
+    model_path = os.path.join(webui_dir, "models", "Realistic_Vision_V2.0.safetensors")
     
     if not os.path.exists(model_path):
         result = run_cmd(f"wget -O {model_path} {model_url}")
@@ -117,6 +131,9 @@ export COMMANDLINE_ARGS="--listen --port 7860 --api --xformers --enable-insecure
 
 def main():
     try:
+        # Check if running as root
+        check_user()
+        
         # Setup environment and get WebUI directory
         webui_dir = setup_environment()
         
