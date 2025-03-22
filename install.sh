@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🟢 Xác định hệ điều hành
+# 🟢 Kiểm tra hệ điều hành
 echo "🟢 Kiểm tra hệ điều hành..."
 if [ -f /etc/debian_version ]; then
     OS="debian"
@@ -52,6 +52,30 @@ cd stable-diffusion-webui
 echo "🟢 Tải mô hình Stable Diffusion Realistic Vision V2.0..."
 mkdir -p models/Stable-diffusion
 wget -O models/Stable-diffusion/model.safetensors https://huggingface.co/SG161222/Realistic_Vision_V2.0/resolve/main/Realistic_Vision_V2.0.safetensors
+
+# 🟢 Cài đặt ControlNet
+echo "🟢 Cài đặt ControlNet..."
+mkdir -p extensions
+git clone https://github.com/Mikubill/sd-webui-controlnet.git extensions/sd-webui-controlnet
+
+# 🟢 Tải mô hình ControlNet
+echo "🟢 Tải mô hình ControlNet..."
+mkdir -p models/ControlNet
+cd models/ControlNet
+wget -O control_sd15_openpose.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_openpose.pth
+wget -O control_sd15_canny.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_canny.pth
+wget -O control_sd15_depth.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_depth.pth
+cd ../../
+
+# 🟢 Cài đặt LoRA
+echo "🟢 Cài đặt LoRA..."
+mkdir -p models/Lora
+git clone https://github.com/kohya-ss/sd-scripts.git extensions/sd-scripts
+
+# 🟢 Tải một số mô hình LoRA mẫu
+echo "🟢 Tải mô hình LoRA..."
+wget -O models/Lora/chilloutmix-lora.safetensors https://civitai.com/api/download/models/6274
+wget -O models/Lora/toonify.safetensors https://civitai.com/api/download/models/7893
 
 # 🟢 Chạy WebUI với GPU
 echo "🟢 Chạy Stable Diffusion WebUI..."
