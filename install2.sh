@@ -62,9 +62,10 @@ git clone https://github.com/Mikubill/sd-webui-controlnet.git extensions/sd-webu
 echo "🟢 Tải mô hình ControlNet..."
 mkdir -p models/ControlNet
 cd models/ControlNet
-wget -O control_sd15_openpose.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_openpose.pth
-wget -O control_sd15_canny.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_canny.pth
-wget -O control_sd15_depth.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_depth.pth
+# wget -O control_sd15_openpose.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_sd15_openpose.pth
+wget -O control_sd15_canny.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth
+wget -O control_sd15_depth.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11f1p_sd15_depth.pth
+wget -O control_sd15_linear.pth https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart.pth
 cd ../../
 
 # 🟢 Cài đặt LoRA
