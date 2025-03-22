@@ -22,6 +22,33 @@ def check_cuda():
         pass
     return False
 
+def clone_webui(webui_dir):
+    print("Attempting to clone WebUI repository...")
+    
+    # First try with HTTPS
+    print("Trying HTTPS clone...")
+    result = run_cmd("git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git")
+    if result == 0:
+        return True
+        
+    # If HTTPS fails, try with git protocol
+    print("HTTPS clone failed, trying git protocol...")
+    result = run_cmd("git clone git://github.com/AUTOMATIC1111/stable-diffusion-webui.git")
+    if result == 0:
+        return True
+    
+    # If both fail, try downloading zip
+    print("Git clone failed, trying to download zip...")
+    zip_url = "https://github.com/AUTOMATIC1111/stable-diffusion-webui/archive/refs/heads/master.zip"
+    if run_cmd(f"wget {zip_url} -O webui.zip") == 0:
+        if run_cmd("apt-get install -y unzip") == 0:
+            if run_cmd("unzip webui.zip") == 0:
+                if run_cmd("mv stable-diffusion-webui-master stable-diffusion-webui") == 0:
+                    run_cmd("rm webui.zip")
+                    return True
+    
+    return False
+
 def setup_environment():
     print("Setting up environment...")
     
@@ -44,13 +71,13 @@ def setup_environment():
     webui_dir = os.path.join(current_dir, "stable-diffusion-webui")
     if not os.path.exists(webui_dir):
         print("Cloning Stable Diffusion WebUI...")
-        result = run_cmd("git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git")
-        if result != 0:
-            raise Exception("Failed to clone WebUI repository")
+        if not clone_webui(webui_dir):
+            raise Exception("Failed to clone WebUI repository after all attempts")
     else:
         print("WebUI directory already exists, updating...")
         os.chdir(webui_dir)
-        run_cmd("git pull")
+        if run_cmd("git pull") != 0:
+            print("Warning: Failed to update existing repository")
         os.chdir(current_dir)
     
     # Create models directory
